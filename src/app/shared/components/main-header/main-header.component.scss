@@ -1,0 +1,39 @@
+@use 'vars' as *;
+
+:host {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  height: $header-height;
+  gap: $default-padding;
+
+  section.side {
+    display: flex;
+    justify-content: center;
+    width: $main-menu-width;
+    padding: $default-padding;
+
+    button {
+      width: calc(100% - $default-padding);
+      border-radius: $default-border-radius;
+    }
+  }
+
+  section.main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    img.main {
+      width: 2rem;
+      height: 2rem;
+    }
+
+    h1 {
+      display: inline-block;
+      margin: 0;
+      white-space: nowrap;
+      color: rgb(200 200 200);
+    }
+  }
+}

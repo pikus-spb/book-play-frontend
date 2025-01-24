@@ -1,0 +1,32 @@
+@use 'vars' as *;
+
+.library-container {
+  padding: 2 * $default-padding;
+
+  h1.main {
+    margin-bottom: 0;
+
+    h3 {
+      display: inline-block;
+      margin-left: 1rem;
+    }
+  }
+  .letters-container {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: $default-padding;
+    align-items: start;
+
+    h1.link {
+      a.active {
+        text-decoration: none;
+        font-weight: normal;
+      }
+    }
+  }
+
+  .authors-container {
+    margin-top: $default-padding;
+  }
+}

@@ -1,0 +1,22 @@
+<div class="library-container">
+  <h1 class="main">
+    Библиотека
+    <h3>(авторы, книги)</h3>
+  </h1>
+
+  <div *ngIf="this.loadLetters() | async as letters" class="letters-container">
+    <h1 class="link" *ngFor="let letter of letters">
+      <a
+        [routerLink]="'/library/' + letter"
+        [class.active]="isActiveLetter(letter) | async"
+        >{{ letter.toUpperCase() }}</a
+      >
+    </h1>
+  </div>
+
+  <div *ngIf="this.loadBooks() | async as authors" class="authors-container">
+    <div *ngFor="let author of authors | keyvalue">
+      <books-group [books]="author.value"></books-group>
+    </div>
+  </div>
+</div>

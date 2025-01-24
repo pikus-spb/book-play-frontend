@@ -1,0 +1,11 @@
+{
+  "frontend/**/*.ts": [
+    "prettier --write",
+    "eslint"
+  ],
+  "frontend/**/*.html": [
+    "eslint",
+    "prettier --write"
+  ],
+  "frontend/**/*.scss": "prettier --write"
+}
