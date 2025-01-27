@@ -11,7 +11,7 @@
     ><mat-icon>upload</mat-icon>Загрузить
   </a>
   <a
-    *ngIf="openedBookService.book$ | async"
+    *ngIf="openedBookService.book().bookTitle"
     mat-list-item
     routerLink="/player"
     routerLinkActive="active">

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { first, map, Observable } from 'rxjs';
 
 import { BookData } from '../model/fb2-book.types';
 import { FileReaderService } from './file-reader.service';
@@ -14,13 +13,10 @@ export class Fb2ReaderService {
     private fileHelper: FileReaderService
   ) {}
 
-  public readBookFromFile(file: Blob): Observable<BookData> {
-    return this.fileHelper.readFile(file).pipe(
-      first(),
-      map((text: string) => {
-        return this.readBookFromString(text);
-      })
-    );
+  public readBookFromFile(file: Blob): Promise<BookData> {
+    return this.fileHelper.readFile(file).then((text: string) => {
+      return this.readBookFromString(text);
+    });
   }
 
   public readBookFromString(text: string): BookData {

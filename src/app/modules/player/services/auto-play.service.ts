@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
+import { effect, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import {
   BehaviorSubject,
-  debounceTime,
   filter,
   firstValueFrom,
   fromEvent,
@@ -82,17 +81,12 @@ export class AutoPlayService {
       )
       .subscribe();
 
-    this.openedBook.book$
-      .pipe(
-        takeUntilDestroyed(),
-        filter(book => Boolean(book)),
-        debounceTime(300),
-        tap(() => {
-          this.stop();
-          this.domHelper.showActiveParagraph();
-        })
-      )
-      .subscribe();
+    effect(() => {
+      if (this.openedBook.book()) {
+        this.stop();
+        this.domHelper.showActiveParagraph();
+      }
+    });
   }
 
   private resume(): void {

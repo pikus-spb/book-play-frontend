@@ -5,10 +5,11 @@
   <div
     class="scrollable-canvas"
     [class.scrolling]="scrolling$ | async"
-    *ngIf="book$ | async as book"
+    *ngIf="book() as book"
     cdkVirtualScrollingElement>
     <h1>
-      {{ book.author.first }} {{ book.author.last }} - {{ book.bookTitle }}
+      {{ book.author ? book.author.first : '' }}
+      {{ book.author ? book.author.last : '' }} - {{ book.bookTitle }}
     </h1>
 
     <section class="title-picture-container">

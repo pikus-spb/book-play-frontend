@@ -4,7 +4,7 @@ import {
   EventEmitter,
   Output,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { BehaviorSubject, merge, Subject, tap } from 'rxjs';
 import { MaterialModule } from 'src/app/core/modules/material.module';
@@ -26,7 +26,7 @@ export class MainHeaderComponent {
     private openedBookService: OpenedBookService,
     private router: Router
   ) {
-    merge(this.openedBookService.book$, this.router.events)
+    merge(toObservable(this.openedBookService.book), this.router.events)
       .pipe(
         takeUntilDestroyed(),
         tap(() => {
