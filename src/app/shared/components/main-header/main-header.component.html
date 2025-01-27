@@ -1,10 +1,5 @@
 <ng-container>
   <section class="side">
-    <a href="/"
-      ><img src="assets/images/book-play.ru.png" alt="Book-play.ru"
-    /></a>
-  </section>
-  <section class="main">
     <button
       mat-fab
       extended
@@ -16,6 +11,11 @@
       <mat-icon>menu</mat-icon>
       Меню
     </button>
+  </section>
+  <section class="main">
     <player-button *ngIf="showPlayerButton$ | async"></player-button>
+    <a href="/"
+      ><img src="assets/images/book-play.ru.png" alt="Book-play.ru"
+    /></a>
   </section>
 </ng-container>

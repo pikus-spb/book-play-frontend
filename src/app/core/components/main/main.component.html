@@ -10,7 +10,7 @@
         : 'hidden'
     "></mat-progress-bar>
   <mat-sidenav-container>
-    <mat-sidenav #sidenav mode="side" opened="true">
+    <mat-sidenav #sidenav mode="side" opened="true" (click)="sidenav.close()">
       <main-menu></main-menu>
       <copyright-owner></copyright-owner>
       <copyright></copyright>

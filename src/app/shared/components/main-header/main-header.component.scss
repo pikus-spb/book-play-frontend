@@ -11,19 +11,24 @@
     border-radius: $default-border-radius;
   }
 
+  a {
+    display: flex;
+    justify-self: center;
+
+    img {
+      margin-top: 3px;
+      height: $header-height - $default-padding;
+    }
+  }
+
   section.side {
     display: flex;
     justify-content: center;
     width: $main-menu-width;
     padding: $default-padding;
 
-    a {
-      display: flex;
-      justify-content: center;
-
-      img {
-        height: $header-height - $default-padding;
-      }
+    > * {
+      width: $main-menu-width;
     }
   }
 
