@@ -1,13 +1,5 @@
-import { Injectable } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  filter,
-  first,
-  firstValueFrom,
-  Observable,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { effect, Injectable } from '@angular/core';
+import { first, firstValueFrom, Observable, switchMap, tap } from 'rxjs';
 import { AudioStorageService } from 'src/app/modules/player/services/audio-storage.service';
 import { OpenedBookService } from 'src/app/modules/player/services/opened-book.service';
 import { SpeechService } from 'src/app/modules/voice/services/speech.service';
@@ -34,18 +26,16 @@ export class AudioPreloadingService {
     private speechService: SpeechService,
     private base64Helper: Base64HelperService
   ) {
-    this.openedBook.book$
-      .pipe(
-        takeUntilDestroyed(),
-        filter(book => Boolean(book)),
-        tap(() => (this._initialized = false))
-      )
-      .subscribe();
+    effect(() => {
+      if (this.openedBook.book().bookTitle) {
+        this._initialized = false;
+      }
+    });
   }
 
   private fetchAudio(index: number): Observable<string> {
     return this.speechService
-      .getVoice(this.openedBook.book?.paragraphs[index] ?? '')
+      .getVoice(this.openedBook.book()?.paragraphs[index] ?? '')
       .pipe(
         switchMap((blob: Blob) => {
           return this.base64Helper.blobToBase64(blob);
@@ -61,7 +51,7 @@ export class AudioPreloadingService {
     startIndex: number,
     extra: number = PRELOAD_EXTRA.default
   ): Promise<void> {
-    const data = this.openedBook.book?.paragraphs;
+    const data = this.openedBook.book()?.paragraphs;
     const dataIsValid = data && data.length > 0 && startIndex >= 0;
 
     if (dataIsValid) {

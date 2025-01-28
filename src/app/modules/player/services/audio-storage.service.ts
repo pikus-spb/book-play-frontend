@@ -1,6 +1,4 @@
-import { Injectable } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { tap } from 'rxjs';
+import { effect, Injectable } from '@angular/core';
 import { OpenedBookService } from 'src/app/modules/player/services/opened-book.service';
 
 @Injectable({
@@ -8,16 +6,16 @@ import { OpenedBookService } from 'src/app/modules/player/services/opened-book.s
 })
 export class AudioStorageService {
   private storage: Map<number, string> = new Map<number, string>();
+  private previousBookTitle: string = '';
 
   constructor(private bookService: OpenedBookService) {
-    this.bookService.book$
-      .pipe(
-        tap(() => {
-          this.clear();
-        }),
-        takeUntilDestroyed()
-      )
-      .subscribe();
+    effect(() => {
+      const title = this.bookService.book()?.bookTitle || '';
+      if (title !== this.previousBookTitle) {
+        this.previousBookTitle = title;
+        this.clear();
+      }
+    });
   }
 
   private clear(): void {

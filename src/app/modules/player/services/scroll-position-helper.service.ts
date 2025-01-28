@@ -20,7 +20,9 @@ export class ScrollPositionHelperService {
   public cursorPositionIsValid(): boolean {
     return (
       this.cursorService.position <
-      (this.openedBook.book ? this.openedBook.book.paragraphs.length : 0)
+      (this.openedBook.book().bookTitle
+        ? this.openedBook.book().paragraphs.length
+        : 0)
     );
   }
 
