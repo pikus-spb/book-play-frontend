@@ -1,33 +1,39 @@
 <div>
-  <div *ngIf="scrolling$ | async" class="skeleton-container">
-    <canvas-skeleton></canvas-skeleton>
-  </div>
-  <div
-    class="scrollable-canvas"
-    [class.scrolling]="scrolling$ | async"
-    *ngIf="book() as book"
-    cdkVirtualScrollingElement>
-    <h1>
-      {{ book.author ? book.author.first : '' }}
-      {{ book.author ? book.author.last : '' }} - {{ book.bookTitle }}
-    </h1>
+  @if (scrolling()) {
+    <div class="skeleton-container">
+      <canvas-skeleton></canvas-skeleton>
+    </div>
+  }
+  @if (book()) {
+    <div
+      class="scrollable-canvas"
+      [class.scrolling]="scrolling()"
+      cdkVirtualScrollingElement>
+      <h1>
+        {{ bookData.author ? bookData.author.first : '' }}
+        {{ bookData.author ? bookData.author.last : '' }} -
+        {{ bookData.bookTitle }}
+      </h1>
 
-    <section class="title-picture-container">
-      <img *ngIf="book.bookTitlePicture" [src]="book.bookTitlePicture" />
-    </section>
+      <section class="title-picture-container">
+        <img
+          *ngIf="bookData.bookTitlePicture"
+          [src]="bookData.bookTitlePicture" />
+      </section>
 
-    <cdk-virtual-scroll-viewport
-      #scrollViewport
-      autosize
-      class="infinite-scroll-container"
-      [style.visibility]="(scrolling$ | async) ? 'hidden' : 'visible'">
-      <book-paragraph
-        *cdkVirtualFor="let text of book.paragraphs; index as index"
-        [index]="index"
-        [text]="text"
-        (click)="onParagraphClick(index)"
-        class="scroll-item">
-      </book-paragraph>
-    </cdk-virtual-scroll-viewport>
-  </div>
+      <cdk-virtual-scroll-viewport
+        #scrollViewport
+        autosize
+        class="infinite-scroll-container"
+        [style.visibility]="scrolling() ? 'hidden' : 'visible'">
+        <book-paragraph
+          *cdkVirtualFor="let text of bookData.paragraphs; index as index"
+          [index]="index"
+          [text]="text"
+          (click)="onParagraphClick(index)"
+          class="scroll-item">
+        </book-paragraph>
+      </cdk-virtual-scroll-viewport>
+    </div>
+  }
 </div>

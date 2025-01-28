@@ -12,7 +12,7 @@ const RETRY_NUMBER = 3;
 @Injectable({
   providedIn: 'root',
 })
-export class SpeechService {
+export class TtsApiService {
   private dictionary: Record<string, ReplaySubject<Blob>> = {};
   // http requests subscription list, is needed for an ability to cancel not needed http requests
   private subscriptions: Map<Subscription, ReplaySubject<Blob>> = new Map();
@@ -55,7 +55,7 @@ export class SpeechService {
     this.subscriptions = new Map();
   }
 
-  public getVoice(text: string): Observable<Blob> {
+  public textToSpeech(text: string): Observable<Blob> {
     if (!this.dictionary[text] || this.dictionary[text].closed) {
       this.dictionary[text] = this._getVoice(text);
     }

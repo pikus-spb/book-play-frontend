@@ -1,8 +1,13 @@
-<ng-container *ngIf="book()">
-  <book-canvas
-    [book]="book"
-    (paragraphClick)="playParagraph($event)"></book-canvas>
-</ng-container>
-<ng-container *ngIf="contentLoading$ | async" class="skeleton-container">
-  <canvas-skeleton></canvas-skeleton>
-</ng-container>
+@if (book().bookTitle) {
+  <ng-container>
+    <book-canvas
+      [book]="book"
+      (paragraphClick)="playParagraph($event)"></book-canvas>
+  </ng-container>
+
+  @if (contentLoading()) {
+    <ng-container class="skeleton-container">
+      <canvas-skeleton></canvas-skeleton>
+    </ng-container>
+  }
+}

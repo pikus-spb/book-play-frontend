@@ -7,7 +7,7 @@ import { BookDescription } from 'src/app/modules/library/model/books-model';
 import { BookUtilsService } from 'src/app/modules/library/services/book-utils.service';
 import { BooksApiService } from 'src/app/modules/library/services/books-api.service';
 import {
-  AppEvents,
+  AppEventNames,
   EventsStateService,
 } from 'src/app/shared/services/events-state.service';
 
@@ -20,7 +20,7 @@ import {
 })
 export class LibraryComponent {
   private currentLetter = 'а';
-  public AppEvents = AppEvents;
+  public AppEvents = AppEventNames;
 
   constructor(
     public api: BooksApiService,
@@ -32,7 +32,7 @@ export class LibraryComponent {
     this.route.params.subscribe(params => {
       const letter = params['letter'];
       if (this.currentLetter !== letter) {
-        this.eventStates.add(AppEvents.loading);
+        this.eventStates.add(AppEventNames.loading);
       }
     });
   }
@@ -44,7 +44,7 @@ export class LibraryComponent {
       )
       .pipe(
         tap(() => {
-          this.eventStates.remove(AppEvents.loading, true);
+          this.eventStates.remove(AppEventNames.loading, true);
         }),
         map((books: BookDescription[]) => {
           return books.reduce(

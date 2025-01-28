@@ -2,7 +2,7 @@ import { effect, Injectable } from '@angular/core';
 import { first, firstValueFrom, Observable, switchMap, tap } from 'rxjs';
 import { AudioStorageService } from 'src/app/modules/player/services/audio-storage.service';
 import { OpenedBookService } from 'src/app/modules/player/services/opened-book.service';
-import { SpeechService } from 'src/app/modules/voice/services/speech.service';
+import { TtsApiService } from 'src/app/modules/player/services/tts-api.service';
 import { Base64HelperService } from 'src/app/shared/services/base64-helper.service';
 
 export const PRELOAD_EXTRA = Object.freeze({
@@ -23,7 +23,7 @@ export class AudioPreloadingService {
   constructor(
     private openedBook: OpenedBookService,
     private audioStorage: AudioStorageService,
-    private speechService: SpeechService,
+    private speechService: TtsApiService,
     private base64Helper: Base64HelperService
   ) {
     effect(() => {
@@ -35,7 +35,7 @@ export class AudioPreloadingService {
 
   private fetchAudio(index: number): Observable<string> {
     return this.speechService
-      .getVoice(this.openedBook.book()?.paragraphs[index] ?? '')
+      .textToSpeech(this.openedBook.book()?.paragraphs[index] ?? '')
       .pipe(
         switchMap((blob: Blob) => {
           return this.base64Helper.blobToBase64(blob);

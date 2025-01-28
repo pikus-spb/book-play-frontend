@@ -6,7 +6,7 @@ import {
 import { AudioStorageService } from 'src/app/modules/player/services/audio-storage.service';
 import { CursorPositionStoreService } from 'src/app/modules/player/services/cursor-position-store.service';
 import {
-  AppEvents,
+  AppEventNames,
   EventsStateService,
 } from 'src/app/shared/services/events-state.service';
 
@@ -23,14 +23,14 @@ export class DataHelperService {
 
   public async ensureAudioDataReady() {
     if (!this.audioStorage.get(this.cursorService.position)) {
-      this.eventStateService.add(AppEvents.loading);
+      this.eventStateService.add(AppEventNames.loading);
 
       await this.preloadHelper.preloadParagraph(
         this.cursorService.position,
         PRELOAD_EXTRA.min
       );
 
-      this.eventStateService.remove(AppEvents.loading);
+      this.eventStateService.remove(AppEventNames.loading);
     }
   }
 }

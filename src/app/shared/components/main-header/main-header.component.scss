@@ -5,10 +5,15 @@
   display: flex;
   align-items: center;
   height: $header-height;
+  padding: $default-padding;
   gap: $default-padding;
 
   button {
     border-radius: $default-border-radius;
+
+    &.menu {
+      width: $main-menu-width - 2 * $default-padding;
+    }
   }
 
   a {
@@ -19,22 +24,5 @@
       margin-top: 3px;
       height: $header-height - $default-padding;
     }
-  }
-
-  section.side {
-    display: flex;
-    justify-content: center;
-    width: $main-menu-width;
-    padding: $default-padding;
-
-    > * {
-      width: $main-menu-width;
-    }
-  }
-
-  section.main {
-    display: flex;
-    align-items: center;
-    gap: $default-padding;
   }
 }

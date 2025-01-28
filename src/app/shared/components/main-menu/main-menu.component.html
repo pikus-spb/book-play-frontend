@@ -10,13 +10,11 @@
     [accept]="'.fb2'"
     ><mat-icon>upload</mat-icon>Загрузить
   </a>
-  <a
-    *ngIf="openedBookService.book().bookTitle"
-    mat-list-item
-    routerLink="/player"
-    routerLinkActive="active">
-    <mat-icon>play_arrow</mat-icon>Плеер
-  </a>
+  @if (openedBookService.book().bookTitle) {
+    <a mat-list-item routerLink="/player" routerLinkActive="active">
+      <mat-icon>play_arrow</mat-icon>Плеер
+    </a>
+  }
   <a mat-list-item routerLink="/library">
     <mat-icon>menu_book</mat-icon>
     Книги

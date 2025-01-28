@@ -16,13 +16,13 @@ import {
   ViewChild,
 } from '@angular/core';
 
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { MaterialModule } from 'src/app/core/modules/material.module';
 import { BookParagraphComponent } from 'src/app/modules/player/components/book-paragraph/book-paragraph.component';
 import { createViewportScrollerService } from 'src/app/modules/player/services/viewport-scroller.service';
 import { BookData } from 'src/app/shared/model/fb2-book.types';
 import {
-  AppEvents,
+  AppEventNames,
   EventsStateService,
 } from 'src/app/shared/services/events-state.service';
 
@@ -48,15 +48,17 @@ export class BookCanvasComponent implements AfterViewInit, OnDestroy {
   @Output() paragraphClick: EventEmitter<number> = new EventEmitter<number>();
   @ViewChild('scrollViewport') viewport!: CdkVirtualScrollViewport;
 
-  private destroyed$: Subject<void> = new Subject<void>();
-
-  public scrolling$: Observable<boolean>;
+  public scrolling: Signal<boolean>;
 
   constructor(
     private el: ElementRef,
     public eventState: EventsStateService
   ) {
-    this.scrolling$ = this.eventState.get$(AppEvents.scrollingIntoView);
+    this.scrolling = this.eventState.get(AppEventNames.scrollingIntoView);
+  }
+
+  public get bookData(): BookData {
+    return this.book();
   }
 
   public onParagraphClick(index: number): void {
@@ -75,4 +77,6 @@ export class BookCanvasComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.destroyed$.next();
   }
+
+  private destroyed$: Subject<void> = new Subject<void>();
 }

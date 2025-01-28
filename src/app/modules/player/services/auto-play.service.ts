@@ -4,7 +4,6 @@ import { NavigationEnd, Router } from '@angular/router';
 import {
   BehaviorSubject,
   filter,
-  firstValueFrom,
   fromEvent,
   Observable,
   shareReplay,
@@ -15,9 +14,9 @@ import { AudioStorageService } from 'src/app/modules/player/services/audio-stora
 import { CursorPositionStoreService } from 'src/app/modules/player/services/cursor-position-store.service';
 import { DomHelperService } from 'src/app/modules/player/services/dom-helper.service';
 import { OpenedBookService } from 'src/app/modules/player/services/opened-book.service';
-import { SpeechService } from 'src/app/modules/voice/services/speech.service';
+import { TtsApiService } from 'src/app/modules/player/services/tts-api.service';
 import {
-  AppEvents,
+  AppEventNames,
   EventsStateService,
 } from 'src/app/shared/services/events-state.service';
 import { AudioPreloadingService } from './audio-preloading.service';
@@ -38,7 +37,7 @@ export class AutoPlayService {
     private router: Router,
     private openedBook: OpenedBookService,
     private audioPlayer: AudioPlayerService,
-    private speechService: SpeechService,
+    private speechService: TtsApiService,
     private audioStorage: AudioStorageService,
     private eventStateService: EventsStateService,
     private dataHelper: DataHelperService,
@@ -124,18 +123,16 @@ export class AutoPlayService {
       this.cursorService.position = index;
     }
     this._paused$.next(false);
-    this.eventStateService.remove(AppEvents.loading, true);
+    this.eventStateService.remove(AppEventNames.loading, true);
 
     do {
-      const isScrollingNow = await firstValueFrom(
-        this.eventStateService.get$(AppEvents.scrollingIntoView)
-      );
+      const isScrollingNow = this.eventStateService.get(
+        AppEventNames.scrollingIntoView
+      )();
       if (isScrollingNow) {
-        // wait until scrolling is false
-        await firstValueFrom(
-          this.eventStateService
-            .get$(AppEvents.scrollingIntoView)
-            .pipe(filter(value => !value))
+        await this.eventStateService.waitUntil(
+          AppEventNames.scrollingIntoView,
+          false
         );
       }
 

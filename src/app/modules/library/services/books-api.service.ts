@@ -2,14 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, retry, shareReplay } from 'rxjs';
 
-import { BookDescription, Book } from '../model/books-model';
+import { Book, BookDescription } from '../model/books-model';
 
 const protocol = document.location.protocol;
 const port = protocol === 'https:' ? 8443 : 8282;
 const API_URL = protocol + '//book-play.ru:' + port;
 const RETRY_NUMBER = 3;
 
-enum RequestSuffix {
+enum RequestUrlSuffix {
   letters = '/get-author-letters',
   byLetter = '/get-authors-by-letter/',
   byId = '/get-by-id/',
@@ -19,30 +19,32 @@ enum RequestSuffix {
   providedIn: 'root',
 })
 export class BooksApiService {
-  private requestCache: Map<string, Observable<any | undefined>> = new Map<
+  private requestCache: Map<
     string,
-    Observable<any>
-  >();
+    Observable<BookDescription[] | string[] | Book | undefined>
+  > = new Map();
 
   constructor(private http: HttpClient) {}
 
   public getAllLetters(): Observable<string[]> {
-    if (this.requestCache.get(RequestSuffix.letters) === undefined) {
+    if (this.requestCache.get(RequestUrlSuffix.letters) === undefined) {
       const observable = this.http
-        .get(API_URL + RequestSuffix.letters)
+        .get<string[]>(API_URL + RequestUrlSuffix.letters)
         .pipe(retry(RETRY_NUMBER), shareReplay(1));
 
-      this.requestCache.set(RequestSuffix.letters, observable);
+      this.requestCache.set(RequestUrlSuffix.letters, observable);
     }
 
-    return this.requestCache.get(RequestSuffix.letters) as Observable<string[]>;
+    return this.requestCache.get(RequestUrlSuffix.letters) as Observable<
+      string[]
+    >;
   }
 
   public getAuthorsByLetter(letter: string): Observable<BookDescription[]> {
-    const suffix = RequestSuffix.byLetter + letter;
+    const suffix = RequestUrlSuffix.byLetter + letter;
     if (this.requestCache.get(suffix) === undefined) {
       const observable = this.http
-        .get(API_URL + suffix)
+        .get<BookDescription[]>(API_URL + suffix)
         .pipe(retry(RETRY_NUMBER), shareReplay(1));
 
       this.requestCache.set(suffix, observable);
@@ -52,11 +54,11 @@ export class BooksApiService {
   }
 
   public getById(id: string): Observable<Book> {
-    const suffix = RequestSuffix.byId + id;
+    const suffix = RequestUrlSuffix.byId + id;
 
     if (this.requestCache.get(suffix) === undefined) {
       const observable = this.http
-        .get(API_URL + suffix)
+        .get<Book>(API_URL + suffix)
         .pipe(retry(RETRY_NUMBER), shareReplay(1));
 
       this.requestCache.set(suffix, observable);

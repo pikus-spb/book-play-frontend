@@ -3,7 +3,7 @@ import { CursorPositionStoreService } from 'src/app/modules/player/services/curs
 import { OpenedBookService } from 'src/app/modules/player/services/opened-book.service';
 import { viewportScroller } from 'src/app/modules/player/services/viewport-scroller.service';
 import {
-  AppEvents,
+  AppEventNames,
   EventsStateService,
 } from 'src/app/shared/services/events-state.service';
 
@@ -28,9 +28,9 @@ export class ScrollPositionHelperService {
 
   public async scrollToIndex(cursorIndex: number): Promise<void> {
     if (viewportScroller) {
-      this.eventStateService.add(AppEvents.scrollingIntoView);
+      this.eventStateService.add(AppEventNames.scrollingIntoView);
       await viewportScroller.scrollToIndex(cursorIndex);
-      this.eventStateService.remove(AppEvents.scrollingIntoView);
+      this.eventStateService.remove(AppEventNames.scrollingIntoView);
     }
   }
 }

@@ -3,10 +3,12 @@ import {
   Component,
   EventEmitter,
   Output,
+  signal,
+  WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { BehaviorSubject, merge, Subject, tap } from 'rxjs';
+import { merge, tap } from 'rxjs';
 import { MaterialModule } from 'src/app/core/modules/material.module';
 import { PlayerButtonComponent } from 'src/app/modules/player/components/player-button/player-button.component';
 import { OpenedBookService } from 'src/app/modules/player/services/opened-book.service';
@@ -20,7 +22,7 @@ import { OpenedBookService } from 'src/app/modules/player/services/opened-book.s
 })
 export class MainHeaderComponent {
   @Output() menuClick = new EventEmitter<void>();
-  public showPlayerButton$: Subject<boolean> = new BehaviorSubject(false);
+  public showPlayerButton: WritableSignal<boolean> = signal(false);
 
   constructor(
     private openedBookService: OpenedBookService,
@@ -30,8 +32,8 @@ export class MainHeaderComponent {
       .pipe(
         takeUntilDestroyed(),
         tap(() => {
-          this.showPlayerButton$.next(
-            openedBookService.book !== null &&
+          this.showPlayerButton.set(
+            'bookTitle' in openedBookService.book() &&
               router.url.indexOf('/player') !== -1
           );
         })

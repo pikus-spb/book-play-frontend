@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter, first, map, Observable, tap } from 'rxjs';
+import { filter, first, map, tap } from 'rxjs';
 import { MaterialModule } from 'src/app/core/modules/material.module';
 import { BookUtilsService } from 'src/app/modules/library/services/book-utils.service';
 import { BooksApiService } from 'src/app/modules/library/services/books-api.service';
@@ -19,7 +19,7 @@ import { OpenedBookService } from 'src/app/modules/player/services/opened-book.s
 import { BookData } from 'src/app/shared/model/fb2-book.types';
 import { DocumentTitleService } from 'src/app/shared/services/document-title.service';
 import {
-  AppEvents,
+  AppEventNames,
   EventsStateService,
 } from 'src/app/shared/services/events-state.service';
 import { Fb2ReaderService } from 'src/app/shared/services/fb2-reader.service';
@@ -35,7 +35,7 @@ export class PlayerComponent implements OnInit {
   public get book(): Signal<BookData> {
     return this.openedBookService.book;
   }
-  public contentLoading$: Observable<boolean>;
+  public contentLoading: Signal<boolean>;
 
   constructor(
     public eventState: EventsStateService,
@@ -50,7 +50,7 @@ export class PlayerComponent implements OnInit {
     private documentTitle: DocumentTitleService,
     private bookUtils: BookUtilsService
   ) {
-    this.contentLoading$ = this.eventState.get$(AppEvents.contentLoading);
+    this.contentLoading = this.eventState.get(AppEventNames.contentLoading);
 
     this.router.events
       .pipe(
@@ -92,9 +92,9 @@ export class PlayerComponent implements OnInit {
   private loadBookFromLibrary() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.eventStates.add(AppEvents.loading);
+      this.eventStates.add(AppEventNames.loading);
       this.openedBookService.update({} as BookData);
-      this.eventStates.add(AppEvents.contentLoading);
+      this.eventStates.add(AppEventNames.contentLoading);
 
       this.booksApi
         .getById(id)
@@ -102,9 +102,9 @@ export class PlayerComponent implements OnInit {
           first(),
           map(book => this.fb2Reader.readBookFromString(book.content)),
           tap(bookData => {
-            this.eventStates.remove(AppEvents.contentLoading);
+            this.eventStates.remove(AppEventNames.contentLoading);
             this.openedBookService.update(bookData);
-            this.eventStates.remove(AppEvents.loading);
+            this.eventStates.remove(AppEventNames.loading);
           })
         )
         .subscribe();

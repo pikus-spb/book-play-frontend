@@ -1,13 +1,16 @@
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  ViewChild,
+} from '@angular/core';
 import { MatListItem } from '@angular/material/list';
 import { RouterModule } from '@angular/router';
-import { filter } from 'rxjs';
 import { MaterialModule } from 'src/app/core/modules/material.module';
 import { OpenedBookService } from 'src/app/modules/player/services/opened-book.service';
 import { UploadFileDirective } from 'src/app/shared/directives/upload-file.directive';
 import {
-  AppEvents,
+  AppEventNames,
   EventsStateService,
 } from 'src/app/shared/services/events-state.service';
 import { FileUploadService } from 'src/app/shared/services/file-upload.service';
@@ -27,15 +30,11 @@ export class MainMenuComponent {
     private eventStates: EventsStateService,
     public openedBookService: OpenedBookService
   ) {
-    this.eventStates
-      .get$(AppEvents.runUploadFile)
-      .pipe(
-        takeUntilDestroyed(),
-        filter(value => value)
-      )
-      .subscribe(() => {
+    effect(() => {
+      if (this.eventStates.get(AppEventNames.runUploadFile)()) {
         this.uploadButton?._elementRef.nativeElement.click();
-      });
+      }
+    });
   }
 
   fileUploaded(files?: FileList) {

@@ -17,10 +17,10 @@ import {
   tap,
 } from 'rxjs';
 import { MaterialModule } from 'src/app/core/modules/material.module';
-import { SpeechService } from 'src/app/modules/voice/services/speech.service';
+import { TtsApiService } from 'src/app/modules/player/services/tts-api.service';
 import { Base64HelperService } from 'src/app/shared/services/base64-helper.service';
 import {
-  AppEvents,
+  AppEventNames,
   EventsStateService,
 } from 'src/app/shared/services/events-state.service';
 
@@ -40,7 +40,7 @@ export class VoiceComponent implements AfterViewInit {
   public valid$: Subject<boolean> = new BehaviorSubject(false);
 
   constructor(
-    private speechService: SpeechService,
+    private speechService: TtsApiService,
     private base64Helper: Base64HelperService,
     private eventsState: EventsStateService
   ) {}
@@ -60,10 +60,10 @@ export class VoiceComponent implements AfterViewInit {
   }
 
   async voice() {
-    this.eventsState.add(AppEvents.loading);
+    this.eventsState.add(AppEventNames.loading);
 
     const data = await firstValueFrom(
-      this.speechService.getVoice(this.text).pipe(
+      this.speechService.textToSpeech(this.text).pipe(
         switchMap((blob: Blob) => {
           return this.base64Helper.blobToBase64(blob);
         })
@@ -71,7 +71,7 @@ export class VoiceComponent implements AfterViewInit {
     );
     this.addAudioElement(data, this.text);
 
-    this.eventsState.remove(AppEvents.loading);
+    this.eventsState.remove(AppEventNames.loading);
   }
 
   ngAfterViewInit() {
