@@ -1,5 +1,4 @@
-import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, shareReplay } from 'rxjs';
+import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { CursorPositionStoreService } from 'src/app/modules/player/services/cursor-position-store.service';
 import { BookData } from 'src/app/shared/model/fb2-book.types';
 import { BookHelperService } from 'src/app/shared/services/book-helper.service';
@@ -11,12 +10,8 @@ import { IndexedDbStorageService } from './indexed-db-storage.service';
 })
 export class OpenedBookService {
   private indexedDBBookManager: IndexedDbBookManagerService;
-  private bookData$: BehaviorSubject<BookData | null> =
-    new BehaviorSubject<BookData | null>(null);
 
-  public readonly book$: Observable<BookData | null> = this.bookData$.pipe(
-    shareReplay(1)
-  );
+  public book: WritableSignal<BookData> = signal<BookData>({} as BookData);
 
   constructor(
     private cursorService: CursorPositionStoreService,
@@ -29,15 +24,11 @@ export class OpenedBookService {
     this.indexedDBBookManager.watchOpenedBook();
   }
 
-  update(value: BookData | null): void {
-    this.bookData$.next(value);
+  update(value: BookData): void {
+    this.book.set(value);
 
-    if (value !== null) {
+    if (value.bookTitle) {
       this.cursorService.setCursorName(this.bookHelper.getBookHashKey(value));
     }
-  }
-
-  get book(): BookData | null {
-    return this.bookData$.value;
   }
 }

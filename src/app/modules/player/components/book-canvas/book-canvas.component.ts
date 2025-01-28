@@ -1,8 +1,8 @@
-import { ScrollingModule as ExperimentalScrollingModule } from '@angular/cdk-experimental/scrolling';
 import {
   CdkVirtualScrollViewport,
   ScrollingModule,
 } from '@angular/cdk/scrolling';
+import { ScrollingModule as ExperimentalScrollingModule } from '@angular/cdk-experimental/scrolling';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -12,6 +12,7 @@ import {
   Input,
   OnDestroy,
   Output,
+  Signal,
   ViewChild,
 } from '@angular/core';
 
@@ -43,7 +44,7 @@ const PARAGRAPH_TAG = 'book-paragraph';
   ],
 })
 export class BookCanvasComponent implements AfterViewInit, OnDestroy {
-  @Input() book$?: Observable<BookData | null>;
+  @Input() book!: Signal<BookData>;
   @Output() paragraphClick: EventEmitter<number> = new EventEmitter<number>();
   @ViewChild('scrollViewport') viewport!: CdkVirtualScrollViewport;
 

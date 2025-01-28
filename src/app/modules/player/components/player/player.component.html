@@ -1,6 +1,6 @@
-<ng-container *ngIf="book$ | async">
+<ng-container *ngIf="book()">
   <book-canvas
-    [book$]="book$"
+    [book]="book"
     (paragraphClick)="playParagraph($event)"></book-canvas>
 </ng-container>
 <ng-container *ngIf="contentLoading$ | async" class="skeleton-container">

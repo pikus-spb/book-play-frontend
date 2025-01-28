@@ -1,5 +1,4 @@
-import { tap } from 'rxjs';
-import { BookData } from 'src/app/shared/model/fb2-book.types';
+import { effect } from '@angular/core';
 import {
   DBBookData,
   IndexedDbStorageService,
@@ -10,31 +9,20 @@ export class IndexedDbBookManagerService {
   constructor(
     private indexedDbStorage: IndexedDbStorageService,
     private openedBook: OpenedBookService
-  ) {}
-
-  public watchOpenedBook() {
-    this.updateLoadedBook();
-    this.watchNewBookOpened();
+  ) {
+    effect(() => {
+      if (this.openedBook.book()) {
+        this.indexedDbStorage.set(JSON.stringify(this.openedBook.book()));
+      }
+    });
   }
 
-  private updateLoadedBook() {
+  public watchOpenedBook() {
     this.indexedDbStorage.get().then((data: DBBookData) => {
       if (data && data.content.length > 0) {
         const bookData = JSON.parse(data.content);
         this.openedBook.update(bookData);
       }
     });
-  }
-
-  private watchNewBookOpened() {
-    this.openedBook.book$
-      .pipe(
-        tap((book: BookData | null) => {
-          if (book) {
-            this.indexedDbStorage.set(JSON.stringify(book));
-          }
-        })
-      )
-      .subscribe();
   }
 }

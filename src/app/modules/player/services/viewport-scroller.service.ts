@@ -98,13 +98,15 @@ class ViewportScrollerService {
   }
 
   public async scrollToIndex(index: number): Promise<void> {
-    const itemHeight = this.getItemHeight();
-    const guessOffset = index * itemHeight;
+    if (this.viewport) {
+      const itemHeight = this.getItemHeight();
+      const guessOffset = index * itemHeight;
 
-    this.viewport!.scrollToOffset(Math.round(guessOffset));
-    await firstValueFrom(timer(300));
+      this.viewport.scrollToOffset(Math.round(guessOffset));
+      await firstValueFrom(timer(300));
 
-    await this.adjustOffset(index);
+      await this.adjustOffset(index);
+    }
   }
 }
 

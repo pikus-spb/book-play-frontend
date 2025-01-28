@@ -1,17 +1,18 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnDestroy,
+  effect,
   OnInit,
+  Signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter, first, map, Observable, Subject, takeUntil, tap } from 'rxjs';
+import { filter, first, map, Observable, tap } from 'rxjs';
 import { MaterialModule } from 'src/app/core/modules/material.module';
-import { BookCanvasComponent } from 'src/app/modules/library/components/book-canvas/book-canvas.component';
-import { CanvasSkeletonComponent } from 'src/app/modules/library/components/canvas-skeleton/canvas-skeleton.component';
 import { BookUtilsService } from 'src/app/modules/library/services/book-utils.service';
 import { BooksApiService } from 'src/app/modules/library/services/books-api.service';
+import { BookCanvasComponent } from 'src/app/modules/player/components/book-canvas/book-canvas.component';
+import { CanvasSkeletonComponent } from 'src/app/modules/player/components/canvas-skeleton/canvas-skeleton.component';
 import { AutoPlayService } from 'src/app/modules/player/services/auto-play.service';
 import { DomHelperService } from 'src/app/modules/player/services/dom-helper.service';
 import { OpenedBookService } from 'src/app/modules/player/services/opened-book.service';
@@ -30,9 +31,10 @@ import { Fb2ReaderService } from 'src/app/shared/services/fb2-reader.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MaterialModule, BookCanvasComponent, CanvasSkeletonComponent],
 })
-export class PlayerComponent implements OnInit, OnDestroy {
-  private _destroyed$: Subject<void> = new Subject<void>();
-  public book$?: Observable<BookData | null>;
+export class PlayerComponent implements OnInit {
+  public get book(): Signal<BookData> {
+    return this.openedBookService.book;
+  }
   public contentLoading$: Observable<boolean>;
 
   constructor(
@@ -69,14 +71,29 @@ export class PlayerComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    this.book$ = this.openedBookService.book$;
+    effect(() => {
+      if (this.book().bookTitle) {
+        this.documentTitle.setContextTitle(
+          this.bookUtils.getBookFullDisplayName(this.book())
+        );
+      }
+    });
+  }
+
+  public playParagraph(index: number): void {
+    this.autoPlay.stop();
+    this.autoPlay.start(index);
+  }
+
+  public ngOnInit() {
+    this.loadBookFromLibrary();
   }
 
   private loadBookFromLibrary() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.eventStates.add(AppEvents.loading);
-      this.openedBookService.update(null);
+      this.openedBookService.update({} as BookData);
       this.eventStates.add(AppEvents.contentLoading);
 
       this.booksApi
@@ -92,31 +109,5 @@ export class PlayerComponent implements OnInit, OnDestroy {
         )
         .subscribe();
     }
-  }
-
-  public playParagraph(index: number): void {
-    this.autoPlay.stop();
-    this.autoPlay.start(index);
-  }
-
-  ngOnInit() {
-    this.book$ = this.openedBookService.book$;
-    this.loadBookFromLibrary();
-    this.book$
-      .pipe(
-        takeUntil(this._destroyed$),
-        tap(book => {
-          if (book) {
-            this.documentTitle.setContextTitle(
-              this.bookUtils.getBookFullDisplayName(book)
-            );
-          }
-        })
-      )
-      .subscribe();
-  }
-
-  ngOnDestroy() {
-    this._destroyed$.next();
   }
 }

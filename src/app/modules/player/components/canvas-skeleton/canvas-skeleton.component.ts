@@ -20,8 +20,8 @@ export class CanvasSkeletonComponent {
     this.themeBase,
     { ...this.themeBase, ...{ width: '70%' } },
     { ...this.themeBase, ...{ width: '100%' } },
-    this.themeBase,
     { ...this.themeBase, ...{ width: '20%' } },
+    this.themeBase,
     { ...this.themeBase, ...{ width: '30%' } },
     this.themeBase,
   ];
