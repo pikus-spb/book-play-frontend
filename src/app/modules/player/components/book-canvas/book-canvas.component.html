@@ -4,14 +4,13 @@
       <canvas-skeleton></canvas-skeleton>
     </div>
   }
-  @if (bookData) {
+  @if (bookData?.bookTitle) {
     <div
       class="scrollable-canvas"
       [class.scrolling]="scrolling()"
       cdkVirtualScrollingElement>
       <h1>
-        {{ bookData.author ? bookData.author.first : '' }}
-        {{ bookData.author ? bookData.author.last : '' }} -
+        {{ bookData.author.first }} {{ bookData.author.last }} -
         {{ bookData.bookTitle }}
       </h1>
 

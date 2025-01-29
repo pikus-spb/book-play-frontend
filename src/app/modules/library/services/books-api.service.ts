@@ -6,7 +6,7 @@ import { Book, BookDescription } from '../model/books-model';
 
 const protocol = document.location.protocol;
 const port = protocol === 'https:' ? 8443 : 8282;
-const API_URL = protocol + '//book-play.ru:' + port;
+const API_URL = protocol + '//192.168.31.200:' + port;
 const RETRY_NUMBER = 3;
 
 enum RequestUrlSuffix {

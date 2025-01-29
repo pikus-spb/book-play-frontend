@@ -1,8 +1,5 @@
 <div class="library-container">
-  <h1 class="main">
-    Библиотека
-    <h3>(авторы, книги)</h3>
-  </h1>
+  <h1 class="main">Книги по авторам</h1>
 
   <div *ngIf="this.loadLetters() | async as letters" class="letters-container">
     <h1 class="link" *ngFor="let letter of letters">

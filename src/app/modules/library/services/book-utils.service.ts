@@ -15,6 +15,6 @@ export class BookUtilsService {
   }
 
   public getAuthorFullDisplayName(book: BookDescription): string {
-    return `${book.authorFirstName} ${book.authorLastName}`;
+    return `${book.authorLastName} ${book.authorFirstName}`;
   }
 }
