@@ -6,8 +6,9 @@ export interface BookDescription {
   bookFullName: string;
   logo?: string;
 }
+export type AuthorsBooks = Record<string, BookDescription[]>;
 
-export interface Book {
+export interface BookContents {
   bookFullName: string;
   content: string;
 }

@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter, first, map, tap } from 'rxjs';
+import { filter, tap } from 'rxjs';
 import { MaterialModule } from 'src/app/core/modules/material.module';
 import { BookUtilsService } from 'src/app/modules/library/services/book-utils.service';
 import { BooksApiService } from 'src/app/modules/library/services/books-api.service';
@@ -89,25 +89,19 @@ export class PlayerComponent implements OnInit {
     this.loadBookFromLibrary();
   }
 
-  private loadBookFromLibrary() {
+  private async loadBookFromLibrary() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.eventStates.add(AppEventNames.loading);
       this.openedBookService.update({} as BookData);
       this.eventStates.add(AppEventNames.contentLoading);
 
-      this.booksApi
-        .getById(id)
-        .pipe(
-          first(),
-          map(book => this.fb2Reader.readBookFromString(book.content)),
-          tap(bookData => {
-            this.eventStates.remove(AppEventNames.contentLoading);
-            this.openedBookService.update(bookData);
-            this.eventStates.remove(AppEventNames.loading);
-          })
-        )
-        .subscribe();
+      const book = await this.booksApi.getById(id);
+      const bookData = this.fb2Reader.readBookFromString(book.content);
+
+      this.eventStates.remove(AppEventNames.contentLoading);
+      this.openedBookService.update(bookData);
+      this.eventStates.remove(AppEventNames.loading);
     }
   }
 }

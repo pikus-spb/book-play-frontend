@@ -1,19 +1,10 @@
 <div class="library-container">
-  <h1 class="main">Книги по авторам</h1>
-
-  <div *ngIf="this.loadLetters() | async as letters" class="letters-container">
-    <h1 class="link" *ngFor="let letter of letters">
-      <a
-        [routerLink]="'/library/' + letter"
-        [class.active]="isActiveLetter(letter) | async"
-        >{{ letter.toUpperCase() }}</a
-      >
-    </h1>
-  </div>
-
-  <div *ngIf="this.loadBooks() | async as authors" class="authors-container">
-    <div *ngFor="let author of authors | keyvalue">
-      <books-group [books]="author.value"></books-group>
-    </div>
+  <h1 class="main">Книги</h1>
+  <div class="authors-books-grid">
+    @for (item of data.value() ?? {} | keyvalue; track item.key) {
+      <author-books [data]="item"></author-books>
+    } @empty {
+      <span>Книги временно не доступны</span>
+    }
   </div>
 </div>

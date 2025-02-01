@@ -1,69 +1,68 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, retry, shareReplay } from 'rxjs';
+import { firstValueFrom, Observable, retry, shareReplay } from 'rxjs';
 
-import { Book, BookDescription } from '../model/books-model';
+import {
+  AuthorsBooks,
+  BookContents,
+  BookDescription,
+} from '../model/books-model';
 
 const protocol = document.location.protocol;
 const port = protocol === 'https:' ? 8443 : 8282;
 const API_URL = protocol + '//192.168.31.200:' + port;
 const RETRY_NUMBER = 3;
 
-enum RequestUrlSuffix {
-  letters = '/get-author-letters',
-  byLetter = '/get-authors-by-letter/',
-  byId = '/get-by-id/',
-}
-
 @Injectable({
   providedIn: 'root',
 })
 export class BooksApiService {
-  private requestCache: Map<
-    string,
-    Observable<BookDescription[] | string[] | Book | undefined>
-  > = new Map();
+  private requestCache: Map<string, Observable<unknown>> = new Map();
 
   constructor(private http: HttpClient) {}
 
-  public getAllLetters(): Observable<string[]> {
-    if (this.requestCache.get(RequestUrlSuffix.letters) === undefined) {
-      const observable = this.http
-        .get<string[]>(API_URL + RequestUrlSuffix.letters)
-        .pipe(retry(RETRY_NUMBER), shareReplay(1));
+  public getAllGroupedByAuthor(): Promise<AuthorsBooks> {
+    const url = '/book/all/grouped-by-author';
 
-      this.requestCache.set(RequestUrlSuffix.letters, observable);
-    }
-
-    return this.requestCache.get(RequestUrlSuffix.letters) as Observable<
-      string[]
-    >;
+    return this.fromCache<AuthorsBooks>(
+      url,
+      this.http.get<AuthorsBooks>(API_URL + url)
+    );
   }
 
-  public getAuthorsByLetter(letter: string): Observable<BookDescription[]> {
-    const suffix = RequestUrlSuffix.byLetter + letter;
-    if (this.requestCache.get(suffix) === undefined) {
-      const observable = this.http
-        .get<BookDescription[]>(API_URL + suffix)
-        .pipe(retry(RETRY_NUMBER), shareReplay(1));
+  public getById(id: string): Promise<BookContents> {
+    const url = '/book/' + id;
 
-      this.requestCache.set(suffix, observable);
-    }
-
-    return this.requestCache.get(suffix) as Observable<BookDescription[]>;
+    return this.fromCache<BookContents>(
+      url,
+      this.http.get<BookContents>(API_URL + url)
+    );
   }
 
-  public getById(id: string): Observable<Book> {
-    const suffix = RequestUrlSuffix.byId + id;
+  public searchByKeyWord(key: string): Promise<BookDescription[]> {
+    const url = '/book/name/like/' + key;
 
-    if (this.requestCache.get(suffix) === undefined) {
-      const observable = this.http
-        .get<Book>(API_URL + suffix)
-        .pipe(retry(RETRY_NUMBER), shareReplay(1));
+    return this.fromCache<BookDescription[]>(
+      url,
+      this.http.get<BookDescription[]>(API_URL + url)
+    );
+  }
 
-      this.requestCache.set(suffix, observable);
+  private fromCache<T>(url: string, observable: Observable<T>): Promise<T> {
+    this.putToRequestCache<T>(url, observable);
+    return this.getFromRequestCache<T>(url);
+  }
+
+  private putToRequestCache<T>(url: string, observable: Observable<T>) {
+    if (this.requestCache.get(url) === undefined) {
+      this.requestCache.set(
+        url,
+        observable.pipe(retry(RETRY_NUMBER), shareReplay(1)) as Observable<T>
+      );
     }
+  }
 
-    return this.requestCache.get(suffix) as Observable<Book>;
+  private getFromRequestCache<T>(url: string): Promise<T> {
+    return firstValueFrom<T>(this.requestCache.get(url) as Observable<T>);
   }
 }
