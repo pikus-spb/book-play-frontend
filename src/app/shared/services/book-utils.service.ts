@@ -6,15 +6,15 @@ import { BookData } from 'src/app/shared/model/fb2-book.types';
   providedIn: 'root',
 })
 export class BookUtilsService {
-  public getAuthorDisplayName(book: BookDescription): string {
-    return `${book.authorFirstName[0]}.${book.authorLastName}`;
-  }
-
   public getBookFullDisplayName(book: BookData): string {
     return `${book.author.first} ${book.author.last} - ${book.bookTitle}`;
   }
 
-  public getAuthorFullDisplayName(book: BookDescription): string {
-    return `${book.authorLastName} ${book.authorFirstName}`;
+  public getAuthorFullName(book: BookDescription): string {
+    return `${book.authorFirstName} ${book.authorLastName}`;
+  }
+
+  public getBookHashKey(book: BookData): string {
+    return `${book.author.first}${book.author.middle}${book.author.last}${book.bookTitle}${book.paragraphs.length}`;
   }
 }

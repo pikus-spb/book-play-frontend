@@ -9,7 +9,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs';
 import { MaterialModule } from 'src/app/core/modules/material.module';
-import { BookUtilsService } from 'src/app/modules/library/services/book-utils.service';
 import { BooksApiService } from 'src/app/modules/library/services/books-api.service';
 import { BookCanvasComponent } from 'src/app/modules/player/components/book-canvas/book-canvas.component';
 import { CanvasSkeletonComponent } from 'src/app/modules/player/components/canvas-skeleton/canvas-skeleton.component';
@@ -17,6 +16,7 @@ import { AutoPlayService } from 'src/app/modules/player/services/auto-play.servi
 import { DomHelperService } from 'src/app/modules/player/services/dom-helper.service';
 import { OpenedBookService } from 'src/app/modules/player/services/opened-book.service';
 import { BookData } from 'src/app/shared/model/fb2-book.types';
+import { BookUtilsService } from 'src/app/shared/services/book-utils.service';
 import { DocumentTitleService } from 'src/app/shared/services/document-title.service';
 import {
   AppEventNames,

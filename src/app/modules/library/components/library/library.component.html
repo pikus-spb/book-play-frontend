@@ -1,10 +1,17 @@
 <div class="library-container">
-  <h1 class="main">Книги</h1>
+  <h1 class="main">
+    Книги <small>(по авторам)</small>
+    @if (eventStates.get(AppEventNames.loading)()) {
+      <mat-progress-bar mode="buffer"></mat-progress-bar>
+    }
+  </h1>
   <div class="authors-books-grid">
     @for (item of data.value() ?? {} | keyvalue; track item.key) {
       <author-books [data]="item"></author-books>
     } @empty {
-      <span>Книги временно не доступны</span>
+      @if (!eventStates.get(AppEventNames.loading)()) {
+        <span>Книги временно не доступны</span>
+      }
     }
   </div>
 </div>

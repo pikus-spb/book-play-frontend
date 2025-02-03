@@ -1,7 +1,7 @@
 import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { CursorPositionStoreService } from 'src/app/modules/player/services/cursor-position-store.service';
 import { BookData } from 'src/app/shared/model/fb2-book.types';
-import { BookHelperService } from 'src/app/shared/services/book-helper.service';
+import { BookUtilsService } from 'src/app/shared/services/book-utils.service';
 import { IndexedDbBookManagerService } from './indexed-db-book-manager.service';
 import { IndexedDbStorageService } from './indexed-db-storage.service';
 
@@ -15,7 +15,7 @@ export class OpenedBookService {
 
   constructor(
     private cursorService: CursorPositionStoreService,
-    private bookHelper: BookHelperService
+    private bookUtils: BookUtilsService
   ) {
     this.indexedDBBookManager = new IndexedDbBookManagerService(
       inject(IndexedDbStorageService),
@@ -28,7 +28,7 @@ export class OpenedBookService {
     this.book.set(value);
 
     if (value.bookTitle) {
-      this.cursorService.setCursorName(this.bookHelper.getBookHashKey(value));
+      this.cursorService.setCursorName(this.bookUtils.getBookHashKey(value));
     }
   }
 }

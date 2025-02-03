@@ -1,3 +1,24 @@
-<div class="author-container">
-  {{ data.key }}
-</div>
+<mat-card appearance="outlined">
+  <mat-card-header>
+    <mat-card-title [innerHTML]="data.key"></mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <ul>
+      @for (
+        book of data.value | slice: 0 : MAX_BOOKS_PER_AUTHOR;
+        track book.bookFullName;
+        let index = $index
+      ) {
+        @if (index === MAX_BOOKS_PER_AUTHOR - 1) {
+          <div><a href="">Смотреть все книги > ...</a></div>
+        } @else {
+          <li>
+            <a href="/player/{{ book.id }}" [title]="book.title">{{
+              book.title
+            }}</a>
+          </li>
+        }
+      }
+    </ul>
+  </mat-card-content>
+</mat-card>

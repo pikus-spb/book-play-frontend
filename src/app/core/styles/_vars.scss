@@ -4,15 +4,9 @@ $default-padding: 1rem;
 $default-border-width: 1px;
 // - Geometry
 $default-border-radius: 10px;
-$card-footer-height: 60px;
-$card-image-height: 300px;
-$card-image-width: 200px;
-$card-width: calc($card-image-width + 2 * $default-padding);
-$card-header-height: 30px;
-$card-height: calc(
-  $card-image-height + $card-header-height + $card-footer-height + 2 * $default-padding
-);
-$card-header-width: calc($card-width - 2 * $default-padding);
+$card-size: 250px;
+$card-header-height: 50px;
+$card-content-height: $card-size - $card-header-height;
 $main-menu-width: 12rem;
 $header-height: 3.5rem;
 // == Colors ==

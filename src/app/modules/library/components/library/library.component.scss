@@ -1,24 +1,25 @@
+@use '@angular/material' as mat;
 @use 'vars' as *;
 
 .library-container {
   padding: 2 * $default-padding;
 
-  .letters-container {
-    display: flex;
-    flex: 1;
-    flex-wrap: wrap;
-    gap: $default-padding;
-    align-items: start;
+  mat-progress-bar {
+    display: inline-block;
+    width: 2 * $default-padding;
+    margin-left: $default-padding;
 
-    h1.link {
-      a.active {
-        text-decoration: none;
-        font-weight: normal;
-      }
-    }
+    @include mat.progress-bar-overrides(
+      (
+        track-color: $default-color,
+      )
+    );
   }
-
-  .authors-container {
+  .authors-books-grid {
     margin-top: $default-padding;
+    display: grid;
+    gap: $default-padding;
+    grid-template-columns: repeat(auto-fit, minmax($card-size, 1fr));
+    grid-template-rows: repeat(auto-fit, minmax($card-size, 1fr));
   }
 }
