@@ -8,7 +8,7 @@ import { MatListItem } from '@angular/material/list';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/core/modules/material.module';
 import { OpenedBookService } from 'src/app/modules/player/services/opened-book.service';
-import { UploadFileDirective } from 'src/app/shared/directives/upload-file.directive';
+import { UploadFileDirective } from 'src/app/shared/directives/file-upload/upload-file.directive';
 import {
   AppEventNames,
   EventsStateService,

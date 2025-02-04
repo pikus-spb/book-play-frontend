@@ -5,10 +5,10 @@ import {
   effect,
   resource,
 } from '@angular/core';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { AuthorBooksComponent } from 'src/app/modules/library/components/author-books/author-books.component';
 import { AuthorsBooks } from 'src/app/modules/library/model/books-model';
 import { BooksApiService } from 'src/app/modules/library/services/books-api.service';
+import { LoadingThenShowDirective } from 'src/app/shared/directives/loading-then-show/loading-then-show.directive';
 import {
   AppEventNames,
   EventsStateService,
@@ -16,7 +16,7 @@ import {
 
 @Component({
   selector: 'library',
-  imports: [CommonModule, AuthorBooksComponent, MatProgressBar],
+  imports: [CommonModule, AuthorBooksComponent, LoadingThenShowDirective],
   templateUrl: './library.component.html',
   styleUrls: ['./library.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

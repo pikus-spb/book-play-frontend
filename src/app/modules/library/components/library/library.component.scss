@@ -1,20 +1,8 @@
-@use '@angular/material' as mat;
 @use 'vars' as *;
 
 .library-container {
   padding: 2 * $default-padding;
 
-  mat-progress-bar {
-    display: inline-block;
-    width: 2 * $default-padding;
-    margin-left: $default-padding;
-
-    @include mat.progress-bar-overrides(
-      (
-        track-color: $default-color,
-      )
-    );
-  }
   .authors-books-grid {
     margin-top: $default-padding;
     display: grid;
