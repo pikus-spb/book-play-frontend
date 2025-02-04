@@ -1,5 +1,6 @@
 import {
   ComponentRef,
+  contentChild,
   Directive,
   effect,
   EmbeddedViewRef,
@@ -14,42 +15,39 @@ import {
 } from 'src/app/shared/services/events-state.service';
 
 @Directive({
-  selector: '[loadingThenShow]',
+  selector: '[loading]',
 })
 export class LoadingThenShowDirective {
-  @Input() loadingThenShow!: TemplateRef<unknown>;
+  @Input() thenShow?: TemplateRef<unknown>;
 
-  private loadingComponent?: ComponentRef<LoadingIndicatorComponent> | null =
-    null;
-  private embeddedView?: EmbeddedViewRef<unknown>;
-  private embeddedViewThen?: EmbeddedViewRef<unknown>;
+  private placeHolder = contentChild('loading', {
+    read: ViewContainerRef,
+  });
+  private loadingComponentRef?: ComponentRef<LoadingIndicatorComponent>;
+  private embeddedViewRef?: EmbeddedViewRef<unknown>;
 
   constructor(
-    private viewContainerRef: ViewContainerRef,
-    private template: TemplateRef<unknown>,
-    private eventStates: EventsStateService
+    private eventStates: EventsStateService,
+    private viewContainerRef: ViewContainerRef
   ) {
     effect(async () => {
-      if (!this.embeddedView) {
-        this.embeddedView = this.viewContainerRef.createEmbeddedView(
-          this.template
-        );
-      }
+      const viewContainerRef = this.placeHolder() || this.viewContainerRef;
+
       if (this.eventStates.get(AppEventNames.loading)()) {
-        if (this.loadingComponent !== null) {
-          this.loadingComponent = this.viewContainerRef.createComponent(
-            LoadingIndicatorComponent
-          );
-        }
+        this.loadingComponentRef = viewContainerRef.createComponent(
+          LoadingIndicatorComponent
+        );
       } else {
-        if (this.loadingComponent) {
-          this.loadingComponent.destroy();
-          this.loadingComponent = null;
-        }
-        if (!this.embeddedViewThen) {
-          this.embeddedViewThen = this.viewContainerRef.createEmbeddedView(
-            this.loadingThenShow
+        this.loadingComponentRef?.destroy();
+      }
+
+      if (this.thenShow) {
+        if (!this.eventStates.get(AppEventNames.loading)()) {
+          this.embeddedViewRef = this.viewContainerRef.createEmbeddedView(
+            this.thenShow
           );
+        } else {
+          this.embeddedViewRef?.destroy();
         }
       }
     });

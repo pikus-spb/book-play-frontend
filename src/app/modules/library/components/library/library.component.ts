@@ -38,6 +38,4 @@ export class LibraryComponent {
       }
     });
   }
-
-  protected readonly AppEventNames = AppEventNames;
 }
