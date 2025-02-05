@@ -1,38 +1,29 @@
 @use 'vars' as *;
 
-mat-card {
+mat-expansion-panel {
   width: 100%;
-  height: 100%;
   max-height: $card-size;
   border-radius: $default-border-radius;
   background-color: $default-highlight-color;
 
-  mat-card-header {
+  mat-expansion-panel-header {
     height: $card-header-height;
     padding: calc($default-padding / 2) $default-padding;
   }
 
-  mat-card-content {
-    height: $card-content-height;
-    background-color: var(
-      --mat-sidenav-container-background-color,
-      var(--mat-sys-surface)
-    );
+  ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
 
-    > ul {
-      height: calc(100% - $default-padding);
-      padding-left: $default-padding;
-      overflow: auto;
-
-      a {
-        display: block;
-        color: $default-color;
-        text-decoration: none;
-        font-size: small;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-      }
+    a {
+      display: block;
+      color: $default-color;
+      text-decoration: none;
+      font-size: small;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
   }
 }

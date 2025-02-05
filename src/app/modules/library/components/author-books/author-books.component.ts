@@ -1,18 +1,24 @@
 import { CommonModule, KeyValue } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import {
-  MatCard,
-  MatCardContent,
-  MatCardHeader,
-  MatCardTitle,
-} from '@angular/material/card';
+  MatAccordion,
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+} from '@angular/material/expansion';
 import { BookDescription } from 'src/app/modules/library/model/books-model';
 
 const MAX_BOOKS_PER_AUTHOR = 8;
 
 @Component({
   selector: 'author-books',
-  imports: [CommonModule, MatCard, MatCardTitle, MatCardHeader, MatCardContent],
+  imports: [
+    CommonModule,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatAccordion,
+  ],
   templateUrl: './author-books.component.html',
   styleUrl: './author-books.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
