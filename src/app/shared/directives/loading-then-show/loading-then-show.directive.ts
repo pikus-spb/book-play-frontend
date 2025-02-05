@@ -30,9 +30,8 @@ export class LoadingThenShowDirective {
     private eventStates: EventsStateService,
     private viewContainerRef: ViewContainerRef
   ) {
-    effect(async () => {
+    effect(() => {
       const viewContainerRef = this.placeHolder() || this.viewContainerRef;
-
       if (this.eventStates.get(AppEventNames.loading)()) {
         this.loadingComponentRef = viewContainerRef.createComponent(
           LoadingIndicatorComponent
@@ -42,12 +41,12 @@ export class LoadingThenShowDirective {
       }
 
       if (this.thenShow) {
-        if (!this.eventStates.get(AppEventNames.loading)()) {
+        if (this.eventStates.get(AppEventNames.loading)()) {
+          this.embeddedViewRef?.destroy();
+        } else {
           this.embeddedViewRef = this.viewContainerRef.createEmbeddedView(
             this.thenShow
           );
-        } else {
-          this.embeddedViewRef?.destroy();
         }
       }
     });

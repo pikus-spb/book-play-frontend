@@ -1,6 +1,7 @@
 import {
   Component,
   DebugElement,
+  Signal,
   TemplateRef,
   ViewContainerRef,
 } from '@angular/core';
@@ -12,43 +13,31 @@ import { LoadingThenShowDirective } from './loading-then-show.directive';
 @Component({
   selector: 'test-component',
   template:
-    '<ng-template #test1 [loadingThenShow]="test2"></ng-template><ng-template #test2></ng-template><div *ngIf="false; else test1"></div>',
+    '<ng-template #templateMock>{{embeddedContent}}</ng-template><h1 loading [thenShow]="templateMock"></h1>',
   standalone: true,
   imports: [LoadingThenShowDirective],
 })
-class TestComponent {}
+class TestComponent {
+  public embeddedContent = 'testComponentContent';
+}
 
-// Learn hor to test structural directives
-
-xdescribe('LoadingThenShowDirective', () => {
-  let directive: LoadingThenShowDirective;
+describe('LoadingThenShowDirective', () => {
+  let fixture: ComponentFixture<TestComponent>;
   let directiveEl: DebugElement;
-  let fixture: ComponentFixture<unknown>;
-  let viewContainerRefMock: unknown;
-  let templateMock: TemplateRef<unknown>;
-  let eventsStateServiceMock: unknown;
+  let directive: LoadingThenShowDirective;
+  let eventsStateServiceMock: jasmine.SpyObj<EventsStateService>;
 
   beforeEach(() => {
-    // Mock the dependencies
-    viewContainerRefMock = {
-      createEmbeddedView: jasmine.createSpy('createEmbeddedView'),
-      clear: jasmine.createSpy('clear'),
-      createComponent: jasmine
-        .createSpy('createComponent')
-        .and.returnValue({ destroy: jasmine.createSpy('destroy') }),
-    };
-
-    templateMock = {} as TemplateRef<unknown>;
-
-    eventsStateServiceMock = {
-      get: jasmine.createSpy('get').and.returnValue(false),
-    };
+    // Create a mock for the EventsStateService
+    eventsStateServiceMock = jasmine.createSpyObj('EventsStateService', [
+      'get',
+    ]);
 
     TestBed.configureTestingModule({
       imports: [LoadingThenShowDirective, TestComponent],
       providers: [
-        { provide: ViewContainerRef, useValue: viewContainerRefMock },
-        { provide: TemplateRef, useValue: templateMock },
+        ViewContainerRef,
+        { provide: TemplateRef, useValue: {} as TemplateRef<unknown> },
         { provide: EventsStateService, useValue: eventsStateServiceMock },
       ],
     }).compileComponents();
@@ -64,35 +53,28 @@ xdescribe('LoadingThenShowDirective', () => {
     expect(directive).toBeTruthy();
   });
 
-  // it('should initialize the embedded view when not loading', () => {
-  //   eventsStateServiceMock.get.and.returnValue(false);
-  //   directive.loadingThenShow = templateMock;
-  //   fixture.detectChanges();
-  //   expect(viewContainerRefMock.createEmbeddedView).toHaveBeenCalledWith(
-  //     templateMock
-  //   );
-  // });
-  //
-  // it('should create a loading component when loading', () => {
-  //   eventsStateServiceMock.get.and.returnValue(true);
-  //   directive.loadingThenShow = templateMock;
-  //   fixture.detectChanges();
-  //   expect(viewContainerRefMock.createComponent).toHaveBeenCalledWith(
-  //     LoadingIndicatorComponent
-  //   );
-  // });
-  //
-  // it('should clear the view and destroy loading component when not loading', () => {
-  //   eventsStateServiceMock.get.and.returnValue(false);
-  //   directive.loadingThenShow = templateMock;
-  //   fixture.detectChanges();
-  //   expect(viewContainerRefMock.clear).not.toHaveBeenCalled();
-  // });
-  //
-  // it('should clear the loading component when not loading and view is already created', () => {
-  //   eventsStateServiceMock.get.and.returnValue(false);
-  //   directive.loadingThenShow = templateMock;
-  //   fixture.detectChanges();
-  //   expect(viewContainerRefMock.clear).not.toHaveBeenCalled();
-  // });
+  it('should create a loading component when loading', () => {
+    eventsStateServiceMock.get.and.returnValue((() => {
+      return true;
+    }) as unknown as Signal<boolean>);
+    fixture.detectChanges();
+    expect(eventsStateServiceMock.get).toHaveBeenCalled();
+    expect(
+      fixture.nativeElement.innerHTML.indexOf('<loading-indicator') > 0
+    ).toBeTruthy();
+  });
+
+  it('should initialize the embedded view when not loading', () => {
+    eventsStateServiceMock.get.and.returnValue((() => {
+      return false;
+    }) as unknown as Signal<boolean>);
+    fixture.detectChanges();
+
+    const embeddedContent = fixture.componentInstance.embeddedContent;
+
+    expect(eventsStateServiceMock.get).toHaveBeenCalled();
+    expect(
+      fixture.nativeElement.innerHTML.indexOf(embeddedContent) > 0
+    ).toBeTruthy();
+  });
 });
