@@ -44,7 +44,7 @@ const PARAGRAPH_TAG = 'book-paragraph';
   ],
 })
 export class BookCanvasComponent implements AfterViewInit, OnDestroy {
-  @Input() book!: Signal<BookData>;
+  @Input() book!: Signal<BookData | null>;
   @Output() paragraphClick: EventEmitter<number> = new EventEmitter<number>();
   @ViewChild('scrollViewport') viewport!: CdkVirtualScrollViewport;
 
@@ -57,7 +57,11 @@ export class BookCanvasComponent implements AfterViewInit, OnDestroy {
     this.scrolling = this.eventState.get(AppEventNames.scrollingIntoView);
   }
 
-  public get bookData(): BookData {
+  public trackByFn(index: number, item: string): string {
+    return item;
+  }
+
+  public get bookData(): BookData | null {
     return this.book();
   }
 

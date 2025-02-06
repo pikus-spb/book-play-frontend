@@ -33,7 +33,7 @@ export class MainHeaderComponent {
         takeUntilDestroyed(),
         tap(() => {
           this.showPlayerButton.set(
-            'bookTitle' in openedBookService.book() &&
+            openedBookService.book() !== null &&
               router.url.indexOf('/player') !== -1
           );
         })

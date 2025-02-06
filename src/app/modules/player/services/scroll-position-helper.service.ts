@@ -18,12 +18,11 @@ export class ScrollPositionHelperService {
   ) {}
 
   public cursorPositionIsValid(): boolean {
-    return (
-      this.cursorService.position <
-      (this.openedBook.book().bookTitle
-        ? this.openedBook.book().paragraphs.length
-        : 0)
-    );
+    const book = this.openedBook.book();
+    if (book !== null) {
+      return this.cursorService.position < book.paragraphs.length;
+    }
+    return false;
   }
 
   public async scrollToIndex(cursorIndex: number): Promise<void> {

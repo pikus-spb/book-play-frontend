@@ -5,9 +5,7 @@ import {
   OnInit,
   Signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter, tap } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 import { MaterialModule } from 'src/app/core/modules/material.module';
 import { BooksApiService } from 'src/app/modules/library/services/books-api.service';
 import { BookCanvasComponent } from 'src/app/modules/player/components/book-canvas/book-canvas.component';
@@ -32,7 +30,7 @@ import { Fb2ReaderService } from 'src/app/shared/services/fb2-reader.service';
   imports: [MaterialModule, BookCanvasComponent, CanvasSkeletonComponent],
 })
 export class PlayerComponent implements OnInit {
-  public get book(): Signal<BookData> {
+  public get book(): Signal<BookData | null> {
     return this.openedBookService.book;
   }
   public contentLoading: Signal<boolean>;
@@ -41,7 +39,6 @@ export class PlayerComponent implements OnInit {
     public eventState: EventsStateService,
     private openedBookService: OpenedBookService,
     private autoPlay: AutoPlayService,
-    private router: Router,
     private route: ActivatedRoute,
     private domHelper: DomHelperService,
     private booksApi: BooksApiService,
@@ -52,29 +49,11 @@ export class PlayerComponent implements OnInit {
   ) {
     this.contentLoading = this.eventState.get(AppEventNames.contentLoading);
 
-    this.router.events
-      .pipe(
-        takeUntilDestroyed(),
-        filter(event => {
-          return (
-            event instanceof NavigationEnd &&
-            this.router.url.match('/player') !== null
-          );
-        }),
-        tap(async () => {
-          if (this.route.snapshot.paramMap.get('id')) {
-            this.loadBookFromLibrary();
-          } else {
-            this.domHelper.showActiveParagraph();
-          }
-        })
-      )
-      .subscribe();
-
     effect(() => {
-      if (this.book().bookTitle) {
+      const book = this.book();
+      if (book !== null) {
         this.documentTitle.setContextTitle(
-          this.bookUtils.getBookFullDisplayName(this.book())
+          this.bookUtils.getBookFullDisplayName(book)
         );
       }
     });
@@ -86,22 +65,25 @@ export class PlayerComponent implements OnInit {
   }
 
   public ngOnInit() {
-    this.loadBookFromLibrary();
+    this.prepeareBook();
   }
 
-  private async loadBookFromLibrary() {
+  private async prepeareBook() {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
+    if (id !== null) {
       this.eventStates.add(AppEventNames.loading);
-      this.openedBookService.update({} as BookData);
       this.eventStates.add(AppEventNames.contentLoading);
+
+      this.openedBookService.update(null);
 
       const book = await this.booksApi.getById(id);
       const bookData = this.fb2Reader.readBookFromString(book.content);
+      this.openedBookService.update(bookData);
 
       this.eventStates.remove(AppEventNames.contentLoading);
-      this.openedBookService.update(bookData);
       this.eventStates.remove(AppEventNames.loading);
+    } else {
+      this.domHelper.showActiveParagraph();
     }
   }
 }

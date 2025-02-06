@@ -4,7 +4,8 @@
       <canvas-skeleton></canvas-skeleton>
     </div>
   }
-  @if (bookData.bookTitle) {
+  @if (bookData !== null) {
+    {{ bookData }}
     <div
       class="scrollable-canvas"
       [class.scrolling]="scrolling()"
@@ -26,7 +27,11 @@
         class="infinite-scroll-container"
         [style.visibility]="scrolling() ? 'hidden' : 'visible'">
         <book-paragraph
-          *cdkVirtualFor="let text of bookData.paragraphs; index as index"
+          *cdkVirtualFor="
+            let text of bookData.paragraphs;
+            index as index;
+            trackBy: trackByFn
+          "
           [index]="index"
           [text]="text"
           (click)="onParagraphClick(index)"

@@ -27,7 +27,7 @@ export class AudioPreloadingService {
     private base64Helper: Base64HelperService
   ) {
     effect(() => {
-      if (this.openedBook.book().bookTitle) {
+      if (this.openedBook.book()) {
         this._initialized = false;
       }
     });

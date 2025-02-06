@@ -10,7 +10,7 @@
     [accept]="'.fb2'"
     ><mat-icon>upload</mat-icon>Загрузить
   </a>
-  @if (openedBookService.book().bookTitle) {
+  @if (openedBookService.book()) {
     <a mat-list-item routerLink="/player" routerLinkActive="active">
       <mat-icon>play_arrow</mat-icon>Плеер
     </a>
